@@ -10,9 +10,17 @@ abstract class AuthEvent extends Equatable {
 }
 
 class AuthSignUp extends AuthEvent {
+  // ignore: annotate_overrides
   final String name;
   final String email;
   final String password;
 
   const AuthSignUp({required this.name, required this.email, required this.password});
+}
+
+class AuthSignIn extends AuthEvent {
+  final String email;
+  final String password;
+
+  const AuthSignIn({required this.email, required this.password});
 }

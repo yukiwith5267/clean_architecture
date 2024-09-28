@@ -1,6 +1,10 @@
+import 'package:app/core/utils/show_snackbar.dart';
+import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:app/features/auth/presentation/pages/home_page.dart';
 import 'package:app/features/auth/presentation/widgets/auth_button.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -27,9 +31,21 @@ class _SigninPageState extends State<SigninPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              const SizedBox(height: 100),
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthFailure) {
+                showSnackBar(context, state.message);
+              } else if (state is AuthSuccess) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              }
+            },
+            builder: (context, state) {
+              return Column(
+                children: [
+                  const SizedBox(height: 100),
               const Text('Sign In',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 80),
@@ -46,10 +62,17 @@ class _SigninPageState extends State<SigninPage> {
               const SizedBox(height: 30),
               AuthButton(
                 text: 'Sign In',
-                onPressed: () {},
+                onPressed: () {
+                  context.read<AuthBloc>().add(AuthSignIn(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      ));
+                },
               ),
-              const SizedBox(height: 30),
-            ],
+                  const SizedBox(height: 30),
+                ],
+              );
+            },
           ),
         ),
       ),

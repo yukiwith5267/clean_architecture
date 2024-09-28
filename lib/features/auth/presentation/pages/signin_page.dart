@@ -50,29 +50,44 @@ class _SigninPageState extends State<SigninPage> {
               return Column(
                 children: [
                   const SizedBox(height: 100),
-              const Text('Sign In',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 80),
-              AuthField(
-                controller: emailController,
-                hintText: 'Email',
-              ),
-              const SizedBox(height: 30),
-              AuthField(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
-              ),
-              const SizedBox(height: 30),
-              AuthButton(
-                text: 'Sign In',
-                onPressed: () {
-                  context.read<AuthBloc>().add(AuthSignIn(
-                        email: emailController.text,
-                        password: passwordController.text,
-                      ));
-                },
-              ),
+                  const Text('Sign In',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 80),
+                  AuthField(
+                    controller: emailController,
+                    hintText: 'Email',
+                  ),
+                  const SizedBox(height: 30),
+                  AuthField(
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 30),
+                  AuthButton(
+                    text: 'Sign In',
+                    onPressed: () {
+                      if (emailController.text.isEmpty ||
+                          passwordController.text.isEmpty) {
+                        showSnackBar(context, 'Please fill in all fields');
+                        return;
+                      }
+                      if (!_isEmailValid(emailController.text)) {
+                        showSnackBar(context, 'Please enter a valid email');
+                        return;
+                      }
+                      if (passwordController.text.length < 6) {
+                        showSnackBar(
+                            context, 'Password must be at least 6 characters');
+                        return;
+                      }
+                      context.read<AuthBloc>().add(AuthSignIn(
+                            email: emailController.text,
+                            password: passwordController.text,
+                          ));
+                    },
+                  ),
                   const SizedBox(height: 30),
                 ],
               );
@@ -81,5 +96,10 @@ class _SigninPageState extends State<SigninPage> {
         ),
       ),
     );
+  }
+
+  bool _isEmailValid(String email) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
   }
 }

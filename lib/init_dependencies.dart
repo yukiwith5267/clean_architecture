@@ -1,3 +1,4 @@
+import 'package:app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:get_it/get_it.dart';
 import 'package:app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:app/features/auth/data/repositories/auth_repository_impl.dart';
@@ -15,28 +16,24 @@ Future<void> initDependencies() async {
     anonKey: AppSecrets.supabaseAnonKey,
   );
 
-  getIt.registerSingleton<SupabaseClient>(supabase.client);
-
-  getIt.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(supabase: getIt<SupabaseClient>()),
-  );
-
-  getIt.registerLazySingleton<AuthRepositoryImpl>(
-    () => AuthRepositoryImpl(remoteDataSource: getIt<AuthRemoteDataSource>()),
-  );
-
-  getIt.registerLazySingleton<UserSignUp>(
-    () => UserSignUp(authRepository: getIt<AuthRepositoryImpl>()),
-  );
-
-  getIt.registerLazySingleton<UserSignIn>(
-    () => UserSignIn(authRepository: getIt<AuthRepositoryImpl>()),
-  );
-
-  getIt.registerFactory<AuthBloc>(
-    () => AuthBloc(
-      userSignUp: getIt<UserSignUp>(),
-      userSignIn: getIt<UserSignIn>(),
-    ),
-  );
+  getIt
+    ..registerSingleton<SupabaseClient>(supabase.client)
+    ..registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceImpl(supabase: getIt<SupabaseClient>()),
+    )
+    ..registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(remoteDataSource: getIt<AuthRemoteDataSource>()),
+    )
+    ..registerLazySingleton<UserSignUp>(
+      () => UserSignUp(authRepository: getIt<AuthRepository>()),
+    )
+    ..registerLazySingleton<UserSignIn>(
+      () => UserSignIn(authRepository: getIt<AuthRepository>()),
+    )
+    ..registerFactory<AuthBloc>(
+      () => AuthBloc(
+        userSignUp: getIt<UserSignUp>(),
+        userSignIn: getIt<UserSignIn>(),
+      ),
+    );
 }

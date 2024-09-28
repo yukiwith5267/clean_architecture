@@ -11,19 +11,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserSignIn userSignIn;
   AuthBloc({required this.userSignUp, required this.userSignIn})
       : super(AuthInitial()) {
-    on<AuthSignUp>((event, emit) async {
-      emit(AuthLoading());
-      final result = await userSignUp.call(UserSignUpParams(
+    on<AuthSignUp>(_onAuthSignUp);
+    on<AuthSignIn>(_onAuthSignIn);
+  }
+
+  Future<void> _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final result = await userSignUp.call(UserSignUpParams(
           name: event.name, email: event.email, password: event.password));
       result.fold((l) => emit(AuthFailure(message: l.message)),
           (r) => emit(AuthSuccess(uid: r)));
-    });
-    on<AuthSignIn>((event, emit) async {
-      emit(AuthLoading());
+  }
+
+  Future<void> _onAuthSignIn(AuthSignIn event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
       final result = await userSignIn
           .call(UserSignInParams(email: event.email, password: event.password));
       result.fold((l) => emit(AuthFailure(message: l.message)),
           (r) => emit(AuthSuccess(uid: r)));
-    });
   }
 }

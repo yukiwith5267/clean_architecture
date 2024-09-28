@@ -2,6 +2,7 @@ import 'package:app/core/common/widget/loader.dart';
 import 'package:app/core/theme/app_pallete.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:app/features/auth/presentation/pages/home_page.dart';
 import 'package:app/features/auth/presentation/pages/signin_page.dart';
 import 'package:app/features/auth/presentation/widgets/auth_button.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
@@ -41,7 +42,7 @@ class _SignUpPageState extends State<SignUpPage> {
               } else if (state is AuthSuccess) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => SigninPage()),
+                  MaterialPageRoute(builder: (context) => const HomePage()),
                 );
               }
             },
@@ -128,7 +129,6 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  // Simple email validation method
   bool _isEmailValid(String email) {
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
     return emailRegex.hasMatch(email);

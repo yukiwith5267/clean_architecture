@@ -1,3 +1,4 @@
+import 'package:app/core/common/widget/loader.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/auth/presentation/pages/home_page.dart';
@@ -43,6 +44,9 @@ class _SigninPageState extends State<SigninPage> {
               }
             },
             builder: (context, state) {
+              if (state is AuthLoading) {
+                return const Loader();
+              }
               return Column(
                 children: [
                   const SizedBox(height: 100),
